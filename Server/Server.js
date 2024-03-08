@@ -13,11 +13,14 @@ mongoose.connect('mongodb://127.0.0.1:27017/test')
 app.post('/add',(req,res)=>
 {
     const task =req.body.task ;
+   
     todomodel.create(
         {
-            task:task
+            task:task,
+            done:false
         }
-    )
+    ).then((res)=>location.reload())
+    .catch((err)=> console.log(err))
 })
 
 
@@ -34,7 +37,21 @@ app.get('/data',async(req,res)=>
     }
 })
 
+app.put('/update/:id',(req,res)=>
+{
+    const {id}=req.params
+    todomodel.findByIdAndUpdate({_id:id},{done:true})
+    .then((result) => location.reload())
+    .catch((err)=> console.log(err))
+})
 
+app.delete('/delete/:id',(req,res)=>
+{
+    const {id} =req.params;
+    todomodel.findByIdAndDelete({_id:id})
+    .then((result)=>res.json(result))
+    .catch((error)=>res.json(error))
+})
 
 app.listen(3001,()=>
 {

@@ -2,7 +2,8 @@
 
 import React from 'react';
 import axios from 'axios';
-
+import { MdCheckBoxOutlineBlank } from "react-icons/md";
+import { MdDeleteOutline } from "react-icons/md";
 
 function App() {
 
@@ -11,7 +12,6 @@ function App() {
   {
     fetchData();
   },[task])
-
   const fetchData = async ()=>
   {
     try 
@@ -31,6 +31,7 @@ function App() {
   const handleAdd =()=>
   {
     axios.post('http://localhost:3001/add',{task: singleTask})
+   
     setsingleTask('')
   }
 
@@ -41,6 +42,17 @@ function App() {
       axios.post('http://localhost:3001/add',{task: singleTask})
       setsingleTask('')
     }
+  }
+
+  const handleEdit =(id)=>
+  {
+    axios.put('http://localhost:3001/update/' +id)
+  
+  }
+
+  const handleDelete =(id)=>
+  {
+    axios.delete('http://localhost:3001/delete/' +id)
   }
 
   return (
@@ -56,9 +68,16 @@ function App() {
         task.length === 0 ? <div>No records found</div> : 
         task.map(
           (item)=>(
-            <div   style={{display:'flex',flexDirection:'column',backgroundColor:'black',color:'white',width:'300px',marginBottom:5,alignItems:'center'}}>
-              <p>{item.task}</p>
+            (item.done===false) ?
+            <div  style={{display:'flex',flexDirection:'row',justifyContent:'space-between',padding:3,backgroundColor:'black',color:'white',width:'300px',marginBottom:5,alignItems:'center'}} onClick={()=>handleEdit(item._id)}>
+              <MdCheckBoxOutlineBlank />
+              <p> {item.task}</p>
+              <div style={{cursor:'pointer'}} onClick={()=>handleDelete(item._id)}>
+              <MdDeleteOutline />
+              </div> 
             </div>
+            :
+            <div></div>
           )
         )
       }
